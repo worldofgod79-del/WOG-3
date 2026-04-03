@@ -4,7 +4,6 @@ on:
   push:
     branches: [ main ]
 
-# ఈ కింద ఉన్న పర్మిషన్స్ కోడ్ తప్పనిసరి
 permissions:
   contents: write
 
@@ -14,21 +13,40 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # 1. Flutter ఇన్‌స్టాలేషన్‌ను క్యాష్ (Cache) చేయడం వల్ల స్పీడ్ పెరుగుతుంది
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          cache: true # ఇది ఇన్‌స్టాలేషన్ టైమ్ తగ్గిస్తుంది
+          cache-key: 'flutter-:os:-:channel:-:version:' # క్యాష్ సేవ్ చేయడానికి కీ
+          cache-path: '${{ runner.tool_cache }}/flutter'
 
+      # 2. వెబ్ కాన్ఫిగరేషన్ (ఒకవేళ లేకపోతేనే చేస్తుంది)
       - name: Configure Web Support
-        run: flutter create . --platforms web
+        run: |
+          if [ ! -d "web" ]; then
+            flutter create . --platforms web
+          fi
+
+      # 3. ప్యాకేజీలను (Dependencies) క్యాష్ చేయడం
+      - name: Restore Pub Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
 
       - name: Install Dependencies
         run: flutter pub get
 
+      # 4. వెబ్ బిల్డ్ రన్ చేయడం
       - name: Build Web
         run: |
           flutter build web --release --base-href /${{ github.event.repository.name }}/ --no-tree-shake-icons
 
+      # 5. గిట్‌హబ్ పేజెస్ లో అప్‌లోడ్ చేయడం
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:

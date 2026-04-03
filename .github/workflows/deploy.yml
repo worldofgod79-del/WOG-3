@@ -4,6 +4,10 @@ on:
   push:
     branches: [ main ]
 
+# ఈ కింద ఉన్న పర్మిషన్స్ కోడ్ తప్పనిసరి
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,7 +27,6 @@ jobs:
 
       - name: Build Web
         run: |
-          # --no-tree-shake-icons ఫ్లాగ్ వల్ల ఐకాన్ ఎర్రర్ రాదు
           flutter build web --release --base-href /${{ github.event.repository.name }}/ --no-tree-shake-icons
 
       - name: Deploy to GitHub Pages

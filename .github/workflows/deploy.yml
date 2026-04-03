@@ -16,13 +16,15 @@ jobs:
           channel: 'stable'
 
       - name: Configure Web Support
-        run: flutter create . --platforms web # ఇది మిస్ అయిన వెబ్ ఫోల్డర్‌ను క్రియేట్ చేస్తుంది
+        run: flutter create . --platforms web
+
+      - name: Install Dependencies
+        run: flutter pub get
 
       - name: Build Web
         run: |
-          flutter pub get
-          # ఇక్కడ YOUR_REPO_NAME తీసేసి మీ రిపోజిటరీ పేరు రాయండి (ఉదా: gospel_app)
-          flutter build web --release --base-href /${{ github.event.repository.name }}/
+          # --no-tree-shake-icons ఫ్లాగ్ వల్ల ఐకాన్ ఎర్రర్ రాదు
+          flutter build web --release --base-href /${{ github.event.repository.name }}/ --no-tree-shake-icons
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import '../core/theme/app_colors.dart';
+import 'home/home_screen.dart';
 
-// ప్రస్తుతానికి ఇవి ఖాళీ స్క్రీన్లు, తర్వాత వీటిలో కోడ్ రాస్తాం
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
 
@@ -11,12 +11,12 @@ class MainNavigation extends StatefulWidget {
 }
 
 class _MainNavigationState extends State<MainNavigation> {
-  int _selectedIndex = 2; // Default గా Home (మధ్యలోది) సెలెక్ట్ అయి ఉంటుంది
+  int _selectedIndex = 2;
 
   final List<Widget> _screens = [
     const Center(child: Text("Bible", style: TextStyle(color: Colors.white))),
     const Center(child: Text("Songs", style: TextStyle(color: Colors.white))),
-    const Center(child: Text("Home", style: TextStyle(color: Colors.white))),
+    const HomeScreen(),
     const Center(child: Text("Books", style: TextStyle(color: Colors.white))),
     const Center(child: Text("Project H", style: TextStyle(color: Colors.white))),
   ];
@@ -24,23 +24,52 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true, // బాటమ్ బార్ కింద కంటెంట్ కనిపించడానికి
       body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: AppColors.darkViolet,
-        selectedItemColor: AppColors.liteYellow,
-        unselectedItemColor: AppColors.gray,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Iconsax.book), label: "Bible"),
-          BottomNavigationBarItem(icon: Icon(Iconsax.music), label: "Songs"),
-          BottomNavigationBarItem(icon: Icon(Iconsax.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Iconsax.document), label: "Books"),
-          BottomNavigationBarItem(icon: Icon(Iconsax.heart), label: "Project H"),
-        ],
+      bottomNavigationBar: Container(
+        height: 70,
+        margin: const EdgeInsets.all(20), // Floating look
+        decoration: BoxDecoration(
+          color: AppColors.darkViolet.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(Iconsax.book, 0),
+            _buildNavItem(Iconsax.music, 1),
+            _buildNavItem(Iconsax.home, 2),
+            _buildNavItem(Iconsax.document, 3),
+            _buildNavItem(Iconsax.heart, 4),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, int index) {
+    bool isSelected = _selectedIndex == index;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedIndex = index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.liteYellow.withOpacity(0.1) : Colors.transparent,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          icon,
+          color: isSelected ? AppColors.liteYellow : AppColors.gray,
+          size: isSelected ? 28 : 24,
+        ),
       ),
     );
   }

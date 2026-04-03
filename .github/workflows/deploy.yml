@@ -9,12 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - run: flutter pub get
-      - run: flutter build web --release --base-href /YOUR_REPO_NAME/
-      - name: Deploy
+
+      - name: Configure Web Support
+        run: flutter create . --platforms web # ఇది మిస్ అయిన వెబ్ ఫోల్డర్‌ను క్రియేట్ చేస్తుంది
+
+      - name: Build Web
+        run: |
+          flutter pub get
+          # ఇక్కడ YOUR_REPO_NAME తీసేసి మీ రిపోజిటరీ పేరు రాయండి (ఉదా: gospel_app)
+          flutter build web --release --base-href /${{ github.event.repository.name }}/
+
+      - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: build/web

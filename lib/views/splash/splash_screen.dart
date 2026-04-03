@@ -18,12 +18,16 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _startAnimation() async {
-    // 5 సెకన్ల తర్వాత హోమ్ స్క్రీన్ కి వెళ్తుంది
-    await Future.delayed(const Duration(milliseconds: 5500));
+    await Future.delayed(const Duration(milliseconds: 5000));
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const MainNavigation()),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => const MainNavigation(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
     );
   }
 
@@ -35,31 +39,32 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // "WORLD OF GOD" Animation
+            // Interstellar expansion effect without wrapping
             TweenAnimationBuilder(
               duration: const Duration(milliseconds: 4000),
-              tween: Tween<double>(begin: 2, end: 18), // అక్షరాల మధ్య దూరం పెరుగుతుంది
+              tween: Tween<double>(begin: 0, end: 12), // Spacing reduced to fit
               builder: (context, double value, child) {
-                return Opacity(
-                  opacity: (value / 18).clamp(0.0, 1.0), // మెల్లిగా కనిపిస్తుంది
-                  child: Text(
-                    "WORLD OF GOD",
-                    style: GoogleFonts.cinzel(
-                      color: AppColors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w200,
-                      letterSpacing: value, 
+                return FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      "WORLD OF GOD",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.cinzel(
+                        color: AppColors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w200,
+                        letterSpacing: value, 
+                      ),
                     ),
                   ),
                 );
               },
             ),
-            
-            const SizedBox(height: 20),
-
-            // "ECO SYSTEM" Subtitle Animation
+            const SizedBox(height: 10),
             TweenAnimationBuilder(
-              duration: const Duration(milliseconds: 5000),
+              duration: const Duration(milliseconds: 4500),
               tween: Tween<double>(begin: 0, end: 1),
               builder: (context, double value, child) {
                 return Opacity(
@@ -67,7 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   child: Text(
                     "ECO SYSTEM",
                     style: GoogleFonts.lato(
-                      color: AppColors.liteYellow.withOpacity(0.5),
+                      color: AppColors.liteYellow.withOpacity(0.4),
                       fontSize: 10,
                       letterSpacing: 4,
                     ),

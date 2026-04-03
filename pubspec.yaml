@@ -19,4 +19,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # Assets మరియు ఫాంట్స్ ఏవైనా ఉంటే ఇక్కడ యాడ్ చేయాలి
